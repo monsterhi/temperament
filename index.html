@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {
+        font-family: "Lato", sans-serif;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+    .sidenav a {
+        padding: 6px 6px 6px 20px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block;
+    }
+
+    .sidenav a:hover {
+        color: #f1f1f1;
+    }
+
+    .main {
+        margin-left: 150px;
+    }
+
+    iframe {
+        width: 100%;
+        border: none;
+    }
+</style>
+</head>
+<body>
+
+    <div class="sidenav">
+        <a href="#" onclick="openpage('pages/about.html')">About</a>
+        <a href="#" onclick="openpage('pages/services.html')">Services</a>
+        <a href="#" onclick="openpage('pages/tests.html')">Тестування</a>
+        <a href="#" onclick="openpage('pages/contact.html')">Contact</a>
+    </div>
+
+
+    <div class="main">
+        <iframe id="myIframe" src="pages/about.html"></iframe>
+    </div>
+   
+    <script>
+        function openpage(src) {
+            var iframe = document.getElementById("myIframe");
+            iframe.src = src;
+        }
+
+        let resizeiframe = function() {
+            var iframe = document.getElementById("myIframe");
+            iframe.style = "height: " + (window.innerHeight - 4) + "px;";
+        }
+
+        window.onresize = resizeiframe;
+
+        resizeiframe();
+    </script>
+</body>
+</html> 
