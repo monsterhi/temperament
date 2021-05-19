@@ -10,10 +10,17 @@
             font-family: "Lato", sans-serif;
         }
         
-        h1 {
+        h1, h5 {
             font-family: "Oswald", sans-serif;
-            font-size: 60px;
             text-align: center;
+        }
+
+        h1 {
+            font-size: 60px;
+        }
+
+        h5 {
+            font-size: 30px;
         }
 
         p {
@@ -36,10 +43,23 @@
 <body>
 
     <h1>Тестування</h1>
-   
-    <ul id="questions">
+    
+    <div>
+        <ul id="questions"></ul>
+    </div>
 
-    </ul>    
+    <div id="open-container">
+        <h5>Відкритість</h5>
+        <p id="open-result"></p>
+    </div>
+
+    <div id="stability-container">
+        <h5>Стабільність</h5>
+        <p id="stability-result"></p>
+    </div>
+
+    <input type="button" id="calc" value="Результат">
+    <input type="button" id="start" value="Почати знову">
 
     <script>
         var questions = [
@@ -85,17 +105,127 @@
             "Мені важко відповісти «ні», коли мене про щось просять."
         ];
 
-        var lis =  "";
-        for(var i = 0; i < questions.length - 1; i++) {
-            lis +=  '<li>' + 
-                        '<span>' + questions[i] + '</span>' + 
-                        '<input type="radio" name="question' + (i+1) + '" id="yes' + (i+1) + '">' + 
-                        '<label for="yes' + (i+1) + '">Так</label>' + 
-                        '<input type="radio" name="question' + (i+1) + '" id="no' + (i+1) + '">' + 
-                        '<label for="no' + (i+1) + '">Ні</label>' + 
-                    '</li>';
-        }
-        document.getElementById("questions").innerHTML = lis;
+        var openIndexes = [1, 3, 5, 8, 11, 14, 16, 19, 21, 23, 25, 27, 29, 32, 34, 37, 39];
+
+        var open_0_5 = "На безлюдному острові ви не страждали б від самотності - вам вистачає свого" +
+                        "суспільства. При наявності здібностей ви досягнете успіху в діяльності, пов'язаної з наукою," +
+                        "мистецтвом, ремеслом, що вимагає точності, акуратності і концентрації уваги." +
+                        "Потреба в спілкуванні у вас виражена менше, ніж у інших людей." +
+                        "Ви, ймовірно, дуже вибагливі в контактах, тому вас може втомлювати робота продавця," +
+                        "лікаря, вчителя, журналіста, менеджера. Зверніть увагу на діяльність, не пов''язану з" +
+                        "інтенсивним спілкуванням - дослідження, програмування, конструювання, робота з" +
+                        "текстом.";
+
+        var open_6_11 = "Ви досить вибагливі в спілкуванні. Вам подобається бути з людьми, але вам не все" +
+                        "одно, хто вас оточує. Ви добре відчуваєте себе в компанії, але легко можете від неї" +
+                        "відмовитися. Самотність вас не лякає. Вам підходять не тільки професії, пов'язані з" +
+                        "спілкуванням, а й професії, що вимагають вміння працювати одному.";
+
+        var open_12_17 = "Потреба в спілкуванні у вас виражена більше, ніж у інших людей. Вам подобається" +
+                        "бути в центрі уваги, для вас значимо думку оточуючих. Іноді заради компанії ви" +
+                        "можете знехтувати іншими справами. Заняття, що вимагають посидючості і терпіння, даються вам" +
+                        "зусиллям волі." +
+                        "Ймовірно, вам підійшли б професії, які передбачають інтенсивне спілкування з покупцями," +
+                        "клієнтами, пацієнтами, учнями, студентами, пасажирами. Якщо ви не тільки любите, але і" +
+                        "вмієте спілкуватися, то будете успішні в будь-якій професії, пов'язаної з великим числом" +
+                        "щоденних зустрічей, переговорів, рад, консультацій. Сверхобщітельность накладає на" +
+                        "людини певні обмеження. Професії, що вимагають терпіння і посидючості (робота з" +
+                        "комп'ютером, дослідницька робота, розрахунки та обчислення), ймовірно, будуть даватися вам" +
+                        "ціною великих вольових зусиль і нервового напруження.";
+
+        var stabilityIndexes = [2, 4, 7, 9, 10, 13, 15, 17, 20, 22, 26, 28, 31, 33, 35, 38, 40];
+
+        var stability_0_5 = "Вашій самовладання можна позаздрити. Ви холоднокровні і незворушні." +
+                        "Переживання інших вам незрозумілі. Ви, скоріше, допоможете справою, ніж будете на словах" +
+                        "висловлювати своє співчуття. Професії, що вимагають ризику, холоднокровності і вміння контролювати" +
+                        "себе як ніби створені для вас. Якщо тільки це не маска супермена (або супервумен). ви" +
+                        "здатні витримувати великі емоційні навантаження. Зверніть увагу на професії" +
+                        "хірурга, військового, співробітника правоохоронних органів, випробувача техніки, рятувальника.";
+
+        var stability_6_11 = "Емоційна стабільність. У вас вдало поєднуються стійкість і" +
+                        "чутливість нервової системи. Ви легше багатьох справляєтеся з життєвими труднощами і" +
+                        "при цьому здатні зрозуміти і відчути емоційний стан іншої людини," +
+                        "підтримати його. Якщо у вас є потреба в спілкуванні, зверніть увагу на такі види" +
+                        "діяльності, як обслуговування, навчання, виховання, медицина, управління.";
+
+        var stability_12_17 = "Ймовірно, ви приймаєте близько до серця не тільки свої проблеми, а й" +
+                        "проблеми своїх друзів і знайомих. Ваша готовність прийти на допомогу іншій людині," +
+                        "ймовірно, подобається іншим людям. Є маса професій, де це якість є" +
+                        "професійно важливим. Наприклад, всі професії соціальної сфери. Люди мистецтва -" +
+                        "художники, музиканти, артисти - також мають особливу сприйнятливістю, чутливістю і" +
+                        "ранимою." +
+                        "Ваша чуйність напевно притягує людей, які потребують вашої співчутті. але в" +
+                        "першу чергу ви повинні допомогти собі знайти силу і впевненість." +
+                        "Відкладіть на горизонтальній осі суму балів за шкалою «Відкритість», а по вертикальній -" +
+                        "суму балів за шкалою «Стабільність» (Врівноваженість).";
+
+        var startTest = function() {
+            var lis =  "";
+            for(var i = 0; i < questions.length - 1; i++) {
+                lis +=  '<li>' + 
+                            '<span>' + questions[i] + '</span>' + 
+                            '<input type="radio" name="question' + i + '" id="yes' + i + '">' + 
+                            '<label for="yes' + i + '">Так</label>' + 
+                            '<input type="radio" name="question' + i + '" id="no' + i + '">' + 
+                            '<label for="no' + i + '">Ні</label>' + 
+                        '</li>';
+            }
+            document.getElementById("questions").innerHTML = lis;
+
+            document.getElementById("calc").style="";
+            document.getElementById("start").style="display:none;";
+            document.getElementById("open-container").style="display:none;";
+            document.getElementById("stability-container").style="display:none;";
+        };
+
+        var calcResults = function() {
+            var openResult = 0;
+            var stabilityResult = 0;
+
+            for(var i = 0; i < questions.length - 1; i++) {
+                if (document.getElementById('yes' + i).checked) {
+                    if (openIndexes.indexOf(i + 1) > -1) {
+                        openResult += 1;
+                    }
+                    if (stabilityIndexes.indexOf(i + 1) > -1) {
+                        stabilityResult += 1;
+                    }
+                }
+            }
+
+            if (openResult >= 0 && openResult <= 5) {
+                document.getElementById("open-result").innerText = open_0_5;
+            } 
+            else if (openResult >= 6 && openResult <= 11) {
+                document.getElementById("open-result").innerText = open_6_11;
+            }
+            else if (openResult >= 12 && openResult <= 17) {
+                document.getElementById("open-result").innerText = open_12_17;
+            }
+
+            if (stabilityResult >= 0 && stabilityResult <= 5) {
+                document.getElementById("stability-result").innerText = stability_0_5;
+            } 
+            else if (stabilityResult >= 6 && stabilityResult <= 11) {
+                document.getElementById("stability-result").innerText = stability_6_11;
+            }
+            else if (stabilityResult >= 12 && stabilityResult <= 17) {
+                document.getElementById("stability-result").innerText = stability_12_17;
+            }
+
+
+            document.getElementById("questions").innerHTML = "";
+
+            document.getElementById("calc").style="display:none;";
+            document.getElementById("open-container").style="";
+            document.getElementById("stability-container").style="";
+            document.getElementById("start").style="";
+        };
+
+        document.getElementById("calc").onclick = calcResults;
+        document.getElementById("start").onclick = startTest;
+
+        startTest();
     </script>    
 </body>
 </html> 
